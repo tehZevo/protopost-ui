@@ -1,0 +1,21 @@
+{
+  "name": "protopost-ui",
+  "version": "0.0.0",
+  "description": "REST API widgets",
+  "main": "main.js",
+  "bin": {
+    "pad": "electron . pad.html"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron . pad.html"
+  },
+  "author": "Zevo",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^9.0.5"
+  },
+  "dependencies": {
+    "protopost": "git+https://github.com/tehZevo/protopost.git"
+  }
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <style>
+    html, body {
+      width:  100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <!-- You can also require other files to run in this process -->
+    <script>
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+
+    canvas.addEventListener("mousemove", updateMouse);
+    canvas.addEventListener("mouseup", mouseUp);
+    canvas.addEventListener("mousedown", mouseDown);
+
+    var ProtoPost = require("protopost");
+    var express = require("express");
+    var app = express();
+
+    var api = new ProtoPost({}, (data) =>
+    {
+      return {
+        x: mouseX,
+        y: mouseY,
+        clicking,
+        points,
+      }
+    });
+
+    app.use("/", api.router);
+
+    app.listen(3000, () => console.log("Listening on port 3000!"))
+
+    window.addEventListener("resize", resizeCanvas);
+    function resizeCanvas() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+
+    var points = [];
+
+    var mouseX, mouseY;
+    var clicking = false;
+    mouseX = mouseY = 0;
+    function updateMouse(e) {
+      mouseX = e.clientX / canvas.width;
+      mouseY = e.clientY / canvas.height;
+      if(clicking)
+      {
+        //console.log(mouseX, mouseY);
+        points.push([mouseX, mouseY]);
+      }
+    }
+
+    function mouseDown(e)
+    {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      points = [];
+      clicking = true;
+    }
+
+    function mouseUp(e)
+    {
+      clicking = false;
+    }
+
+    function drawLine(x1, y1, x2, y2)
+    {
+      ctx.beginPath();
+      ctx.moveTo(x1 * canvas.width, y1 * canvas.height);
+      ctx.lineTo(x2 * canvas.width, y2 * canvas.height);
+      ctx.stroke();
+    }
+
+    function draw()
+    {
+      var w = canvas.width;
+      var h = canvas.height;
+      ctx.fillStyle = "rgb(32, 32, 32)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgb(255, 255, 255)";
+      ctx.lineWidth = 2;
+      drawLine(mouseX, 0, mouseX, 1);
+      drawLine(0, mouseY, 1, mouseY);
+      ctx.beginPath();
+      ctx.arc(mouseX * w, mouseY * h, Math.min(w, h) / 30, 0, 360);
+      ctx.stroke();
+
+      if(points.length > 0)
+      {
+        var p = points[0];
+
+        ctx.strokeStyle = "rgb(128, 128, 255)";
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(p[0] * w, p[1] * h);
+        for(var i = 1; i < points.length; i++)
+        {
+          p = points[i];
+
+          ctx.lineTo(p[0] * w, p[1] * h);
+        }
+        ctx.stroke();
+      }
+
+      window.requestAnimationFrame(draw);
+    }
+
+    window.requestAnimationFrame(draw);
+    </script>
+  </body>
+</html>
